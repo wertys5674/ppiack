@@ -30,10 +30,9 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText et_id, et_password;
-    private Button btn_Goregister,btn_login,btn_GoogleLogin;
+    private Button btn_Goregister, btn_login, btn_GoogleLogin;
 
-    int codde;
-
+    int rCode;
 
 
     @Override
@@ -43,11 +42,9 @@ public class LoginActivity extends AppCompatActivity {
 
         et_id = findViewById(R.id.login_id);
         et_password = findViewById(R.id.login_password);
-        btn_GoogleLogin =findViewById(R.id.btn_GoogleLogin);
+        btn_GoogleLogin = findViewById(R.id.btn_GoogleLogin);
         btn_login = findViewById(R.id.btn_login);
         btn_Goregister = findViewById(R.id.btn_GoRegister);
-
-
 
 
         // 회원가입 눌렀을 때 Register Activity로 이동.
@@ -70,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     jsonObject.put("email", userID);
                     jsonObject.put("password", userPassword);
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Log.d("JSON", "===================================");
@@ -83,16 +80,16 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void run() {
-                        try  {
+                        try {
 
                             String host_url = "http://119.67.63.55:8080/api/v1/person";
                             HttpURLConnection con = null;
 
                             URL url = new URL(host_url);
-                            con =(HttpURLConnection) url.openConnection();
+                            con = (HttpURLConnection) url.openConnection();
 
                             con.setRequestMethod("POST");
-                            con.setRequestProperty("Content-type","application/json");
+                            con.setRequestProperty("Content-type", "application/json");
 
                             con.setDoOutput(true);
                             con.setDoInput(true);
@@ -104,23 +101,23 @@ public class LoginActivity extends AppCompatActivity {
 
                             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                             String returnMsg = in.readLine();
-                            Log.d("MSG", "===================================" );
+                            Log.d("MSG", "===================================");
                             Log.d("MSG", "MSG : " + returnMsg);
-                            Log.d("MSG", "===================================" );
+                            Log.d("MSG", "===================================");
 
                             int responseCode = con.getResponseCode();
-                            Log.d("MSG", "===================================" );
+                            rCode = responseCode;
+                            Log.d("MSG", "===================================");
                             Log.d("MSG", "MSG : " + responseCode);
-                            Log.d("MSG", "===================================" );
-                            if(responseCode ==400){
-                                Log.d("error : 400", "===================================" );
-                            }else if(responseCode == 500){
-                                Log.d("error : 500", "===================================" );
-                            } else{
+                            Log.d("MSG", "===================================");
+                            if (responseCode == 400) {
+                                Log.d("error : 400", "===================================");
+                            } else if (responseCode == 500) {
+                                Log.d("error : 500", "===================================");
+                            } else {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                             }
-
 
 
                         } catch (Exception e) {
@@ -130,6 +127,26 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
                 thread.start();
+
+                try {
+                    thread.join();
+
+
+                    //jsonObject.put("password", userPassword);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d("aaa:", rCode + "===================================");
+
+                if (rCode / 100 == 4) {
+                    Log.d("error : 400", "===================================");
+                } else if (rCode / 100 == 5) {
+                    Log.d("error : 500", "===================================");
+                } else {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
 
             }
         });
@@ -142,8 +159,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
 
 
         //================ onCreate 안 ===================
