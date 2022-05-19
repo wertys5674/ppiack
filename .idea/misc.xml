@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Java/jotgotem/app/src/main/res/layout/activity_main.xml" value="0.18333333333333332" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.23944702148437508" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.13697916666666668" />
+        <entry key="app/src/main/res/layout/activity_register.xml" value="0.13697916666666668" />
+        <entry key="app/src/main/res/layout/activity_scale.xml" value="0.13697916666666668" />
       </map>
     </option>
   </component>

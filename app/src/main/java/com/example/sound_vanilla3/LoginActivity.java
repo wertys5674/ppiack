@@ -82,7 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                     public void run() {
                         try {
 
-                            String host_url = "http://119.67.63.55:8080/api/v1/person";
+                            String host_url = "https://webhook.site/a90b0918-38c0-4c59-ae55-f4af0e74063a";
+//                            String host_url = "http://119.67.63.55:8080/api/v1/person";
                             HttpURLConnection con = null;
 
                             URL url = new URL(host_url);
@@ -130,8 +131,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     thread.join();
-
-
                     //jsonObject.put("password", userPassword);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

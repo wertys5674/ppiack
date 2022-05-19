@@ -474,8 +474,6 @@ public class scaleDetector extends Activity implements OnClickListener {
 */
     @Override
     public void onClick(View arg0) {
-        Intent intent = new Intent(scaleDetector.this, MainActivity.class);
-        startActivity(intent);
         if (started) {
             try {
                 jsonObject.put("email", scaleBuffer);
@@ -543,11 +541,10 @@ public class scaleDetector extends Activity implements OnClickListener {
             }else if(aaa == 500){
                 Log.d("error : 500", "===================================" );
             }
-//            else{
-//                Intent intent = new Intent(scaleDetector.this, MainActivity.class);
-//                startActivity(intent);
-//            }
-
+            else{
+                Intent intent1 = new Intent(scaleDetector.this, MainActivity.class);
+                startActivity(intent1);
+            }
 
             started = false;
             startStopButton.setText("Start");
