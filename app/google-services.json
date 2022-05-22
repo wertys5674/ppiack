@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "682067975733",
+    "project_id": "capstone-1dbeb",
+    "storage_bucket": "capstone-1dbeb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:682067975733:android:ed4144dde348e3b676db7c",
+        "android_client_info": {
+          "package_name": "com.example.sound_vanilla3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "682067975733-ejm1de2jo39ca996usvouibmmhec12m4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sound_vanilla3",
+            "certificate_hash": "ab6f8246695ba65f7067e4ba1afb1ddbae7fd13e"
+          }
+        },
+        {
+          "client_id": "682067975733-o5k4gqapghg5vseap715igfskkeosnsj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHo1Xj1enj-Ox_AfEuyBp-d73Fk3I_8tI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "682067975733-o5k4gqapghg5vseap715igfskkeosnsj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
