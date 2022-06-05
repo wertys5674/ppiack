@@ -35,6 +35,7 @@ public class ResultActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        //
 
 
         Thread uThread = new Thread() {
