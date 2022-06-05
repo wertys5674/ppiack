@@ -44,14 +44,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 
 
+
     //상수 코드에서 추가됨.
     implementation 'com.github.wendykierp:JTransforms:3.1'
    // implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v2.2.4'
 
-
-
-    //mpandroidchart는 위에 리포지토리도 추가해야함
+    //이미지 슬라이더
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation 'me.relex:circleindicator:2.1.4'
 
 }
 

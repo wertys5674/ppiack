@@ -542,7 +542,7 @@ public class scaleDetector extends Activity implements OnClickListener {
                 Log.d("error : 500", "===================================" );
             }
             else{
-                Intent intent1 = new Intent(scaleDetector.this, MainActivity.class);
+                Intent intent1 = new Intent(scaleDetector.this, ResultActivity.class);
                 startActivity(intent1);
             }
 

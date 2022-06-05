@@ -30,7 +30,7 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText et_id, et_password;
-    private Button btn_Goregister, btn_login, btn_GoogleLogin;
+    private Button btn_Goregister, btn_login, btn_imsi;
 
     int rCode;
 
@@ -42,10 +42,10 @@ public class LoginActivity extends AppCompatActivity {
 
         et_id = findViewById(R.id.login_id);
         et_password = findViewById(R.id.login_password);
-        btn_GoogleLogin = findViewById(R.id.btn_GoogleLogin);
         btn_login = findViewById(R.id.btn_login);
         btn_Goregister = findViewById(R.id.btn_GoRegister);
 
+        btn_imsi = findViewById(R.id.imsi_login);
 
         // 회원가입 눌렀을 때 Register Activity로 이동.
         btn_Goregister.setOnClickListener(new View.OnClickListener() {
@@ -150,8 +150,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //  구글 로그인
-        btn_GoogleLogin.setOnClickListener(new View.OnClickListener() {
+
+        btn_imsi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
