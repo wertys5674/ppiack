@@ -476,7 +476,7 @@ public class scaleDetector extends Activity implements OnClickListener {
     public void onClick(View arg0) {
         if (started) {
             try {
-                jsonObject.put("email", scaleBuffer);
+                jsonObject.put("scale", scaleBuffer);
 
                 //jsonObject.put("password", userPassword);
             }
