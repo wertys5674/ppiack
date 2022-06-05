@@ -36,6 +36,7 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+        //
 
         Thread uThread = new Thread() {
             @Override
