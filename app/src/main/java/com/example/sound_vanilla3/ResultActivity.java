@@ -36,8 +36,7 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        //안드로이드에서 네트워크와 관련된 작업을 할 때,
-        //반드시 메인 Thread가 아닌 별도의 작업 Thread를 생성하여 작업해야 한다.
+
         Thread uThread = new Thread() {
             @Override
             public void run(){
