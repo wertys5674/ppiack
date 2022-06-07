@@ -14,6 +14,7 @@ public class Fragment_1 extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView =(ViewGroup) inflater.inflate(
                 R.layout.frame1,container,false);
+        MainActivity.pickValue = 1;
         return  rootView;
     }
 

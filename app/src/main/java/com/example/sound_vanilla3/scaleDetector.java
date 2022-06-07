@@ -476,9 +476,10 @@ public class scaleDetector extends Activity implements OnClickListener {
     public void onClick(View arg0) {
         if (started) {
             try {
-                jsonObject.put("scale", scaleBuffer);
-
-                //jsonObject.put("password", userPassword);
+                jsonObject.put("scale", "jaehyukBabo");
+//                jsonObject.put("scale", scaleBuffer);
+                jsonObject.put("email",LoginActivity.ID);
+                jsonObject.put("scoreId",MainActivity.pickValue);
             }
             catch (JSONException e){
                 e.printStackTrace();
@@ -491,13 +492,14 @@ public class scaleDetector extends Activity implements OnClickListener {
                 public void run() {
                     try  {
 
-                        String host_url = "https://webhook.site/a90b0918-38c0-4c59-ae55-f4af0e74063a";
+//                        String host_url = "https://webhook.site/544e582a-d613-4957-813d-c27757d739a5";
+                        String host_url = "http://119.67.63.55:8080/api/v2/score";
                         HttpURLConnection con = null;
 
                         URL url = new URL(host_url);
                         con =(HttpURLConnection) url.openConnection();
 
-                        con.setRequestMethod("PUT");
+                        con.setRequestMethod("POST");
                         con.setRequestProperty("Content-type","application/json");
 
                         con.setDoOutput(true);
@@ -522,12 +524,9 @@ public class scaleDetector extends Activity implements OnClickListener {
             });
 
             thread.start();
-//            thread.stop();
 
             try {
                 thread.join();
-
-
                 //jsonObject.put("password", userPassword);
             }
             catch (InterruptedException e){

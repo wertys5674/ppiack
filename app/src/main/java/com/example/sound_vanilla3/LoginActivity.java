@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btn_Goregister, btn_login, btn_imsi;
 
     int rCode;
+    public static String ID;
 
 
     @Override
@@ -63,6 +64,9 @@ public class LoginActivity extends AppCompatActivity {
                 //JsonObject 만들기
                 String userID = et_id.getText().toString();
                 String userPassword = et_password.getText().toString();
+
+                ID = userID;
+
                 final JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("email", userID);
@@ -154,6 +158,11 @@ public class LoginActivity extends AppCompatActivity {
         btn_imsi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String userID = et_id.getText().toString();
+
+                ID = userID;
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }

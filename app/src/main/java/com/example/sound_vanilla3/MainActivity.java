@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     CircleIndicator3 mIndicator;
     Button btn_goscale, btn_logout;
 
+    public static int pickValue = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
