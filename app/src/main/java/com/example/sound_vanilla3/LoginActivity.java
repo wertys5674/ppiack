@@ -135,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     thread.join();
-                    //jsonObject.put("password", userPassword);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

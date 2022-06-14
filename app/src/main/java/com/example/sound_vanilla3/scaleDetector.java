@@ -34,12 +34,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.jtransforms.fft.DoubleFFT_1D;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.*;
@@ -50,6 +54,8 @@ import android.media.audiofx.NoiseSuppressor;
 // FFT(Fast Fourier Transform) DFT 알고리즘 : 데이터를 시간 기준(time base)에서 주파수 기준(frequency base)으로 바꾸는데 사용.
 
 public class scaleDetector extends Activity implements OnClickListener {
+
+    int images[] = new int[]{R.drawable.music1, R.drawable.song1};
 
     int frequency = 8192; //주파수가 8192일 경우 4096 까지 측정이 가능함
     int channelConfiguration = AudioFormat.CHANNEL_IN_MONO;
@@ -66,6 +72,8 @@ public class scaleDetector extends Activity implements OnClickListener {
     Button startStopButton;
 
     int aaa = 0;
+    public static String score = "초기모델";
+
 
     boolean started = false;
     // RecordAudio는 여기에서 정의되는 내부 클래스로서 AsyncTask를 확장한다.
@@ -98,8 +106,8 @@ public class scaleDetector extends Activity implements OnClickListener {
     TextView t3;
 
     //스레드 관련 부분 1
-   // scaleThread scThr = new scaleThread();
-      double[] mag = new double[blockSize/2];
+    // scaleThread scThr = new scaleThread();
+    double[] mag = new double[blockSize/2];
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,6 +116,10 @@ public class scaleDetector extends Activity implements OnClickListener {
 
         setContentView(R.layout.activity_scale);
 
+        ImageView mImageView = (ImageView)findViewById(R.id.music1);
+        //int imageId = 1;
+        mImageView.setBackgroundResource(images[MainActivity.pickValue % 2]);
+
         startStopButton = (Button) findViewById(R.id.StartStopButton);
         startStopButton.setOnClickListener(this);
 
@@ -115,48 +127,48 @@ public class scaleDetector extends Activity implements OnClickListener {
         transformer = new RealDoubleFFT(blockSize);
 
         // ImageView 및 관련 객체 설정 부분
-       // imageView = (ImageView) findViewById(R.id.ImageView01);
+        // imageView = (ImageView) findViewById(R.id.ImageView01);
         bitmap = Bitmap.createBitmap((int) blockSize/2, (int) 200, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
         paint = new Paint();
         paint.setColor(Color.GREEN);
-      //  imageView.setImageBitmap(bitmap);
+        //  imageView.setImageBitmap(bitmap);
 
         t0 = (TextView)findViewById(R.id.HzText0);
         t1 = (TextView)findViewById(R.id.HzText1);
         t2 = (TextView)findViewById(R.id.HzText2);
         t3 = (TextView)findViewById(R.id.HzText3);
 
-        chart =(BarChart)findViewById(R.id.chart);
-        YAxis leftYAxis = chart.getAxisLeft();
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setAxisMinValue(0);
-        xAxis.setAxisMaxValue((float)1024);
-        leftYAxis.setAxisMaxValue((float)200);
-        leftYAxis.setAxisMinValue(0);
-        chart.getAxisRight().setEnabled(false);
-
-        //chart 그리기
-        int xChart=0;
-        //x축 라벨 추가
-        //4096 / 16 =256 씩 16칸으로 할거임
-        for(int i=0; i<1024; i++){
-            xlabels.add(Integer.toString(xChart));
-            xChart=xChart+1;
-        }
-
-        //초기 데이터
-        ylabels.add(new BarEntry(2.2f,0));
-        ylabels.add(new BarEntry(10f,512));
-        ylabels.add(new BarEntry(63.f,800));
-        ylabels.add(new BarEntry(70.f,900));
-
-        BarDataSet barDataSet = new BarDataSet(ylabels,"Hz");
-      //  chart.animateY(5000);
-        data = new BarData(xlabels,barDataSet); //MPAndroidChart v3.1 에서 오류나서 다른 버전 사용
-       // barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-
-        chart.setData(data);
+//        chart =(BarChart)findViewById(R.id.chart);
+//        YAxis leftYAxis = chart.getAxisLeft();
+//        XAxis xAxis = chart.getXAxis();
+//        xAxis.setAxisMinValue(0);
+//        xAxis.setAxisMaxValue((float)1024);
+//        leftYAxis.setAxisMaxValue((float)200);
+//        leftYAxis.setAxisMinValue(0);
+//        chart.getAxisRight().setEnabled(false);
+//
+//        //chart 그리기
+//        int xChart=0;
+//        //x축 라벨 추가
+//        //4096 / 16 =256 씩 16칸으로 할거임
+//        for(int i=0; i<1024; i++){
+//            xlabels.add(Integer.toString(xChart));
+//            xChart=xChart+1;
+//        }
+//
+//        //초기 데이터
+//        ylabels.add(new BarEntry(2.2f,0));
+//        ylabels.add(new BarEntry(10f,512));
+//        ylabels.add(new BarEntry(63.f,800));
+//        ylabels.add(new BarEntry(70.f,900));
+//
+//        BarDataSet barDataSet = new BarDataSet(ylabels,"Hz");
+//      //  chart.animateY(5000);
+//        data = new BarData(xlabels,barDataSet); //MPAndroidChart v3.1 에서 오류나서 다른 버전 사용
+//       // barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+//
+//        chart.setData(data);      0608 0131 차트 삭제
 
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -173,7 +185,7 @@ public class scaleDetector extends Activity implements OnClickListener {
     private class RecordAudio extends AsyncTask<Void, double[], Void> {
 
         //스레드 관련 부분 2
-       // scaleThread scThread = new scaleThread();
+        // scaleThread scThread = new scaleThread();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -185,7 +197,7 @@ public class scaleDetector extends Activity implements OnClickListener {
                 // double로 이뤄진 배열인 toTransform은 같은 데이터를 담지만 double 타입인데, FFT 클래스에서는 double타입이 필요해서이다.
                 short[] buffer = new short[blockSize];
                 double[] toTransform = new double[blockSize];
-               // double[] mag = new double[blockSize/2];
+                // double[] mag = new double[blockSize/2];
 
                 NoiseSuppressor noiseSuppressor = null;
                 if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
@@ -246,23 +258,23 @@ public class scaleDetector extends Activity implements OnClickListener {
         @Override
         protected void onProgressUpdate(double[]... toTransform) {
             //차트 삭제 부분
-            xlabels.clear();
-            ylabels.clear();
-
-            int xChart=0;
-
-            for(int i=0; i<1024; i++){
-
-                xlabels.add(Integer.toString(xChart));
-                xChart=xChart+1;
-            }
-
-            for(int i=43; i<1024; i++){
-                if(toTransform[0][i]>0){
-                    ylabels.add(new BarEntry((float)toTransform[0][i],i));
-                    //ylabels.add(new BarEntry((float)i,i));
-                }
-            }
+//            xlabels.clear();
+//            ylabels.clear();
+//
+//            int xChart=0;
+//
+//            for(int i=0; i<1024; i++){
+//
+//                xlabels.add(Integer.toString(xChart));
+//                xChart=xChart+1;
+//            }
+//
+//            for(int i=43; i<1024; i++){
+//                if(toTransform[0][i]>0){
+//                    ylabels.add(new BarEntry((float)toTransform[0][i],i));
+//                    //ylabels.add(new BarEntry((float)i,i));
+//                }
+//            }     0608 0131 차트 삭제
 
 
 
@@ -310,11 +322,11 @@ public class scaleDetector extends Activity implements OnClickListener {
             hzList.clear();
 
             //차트 없애는 부분 여기
-            BarDataSet barDataSet = new BarDataSet(ylabels,"Hz");
-            data = new BarData(xlabels,barDataSet);
-
-            chart.setData(data);
-            chart.invalidate();
+//            BarDataSet barDataSet = new BarDataSet(ylabels,"Hz");
+//            data = new BarData(xlabels,barDataSet);
+//
+//            chart.setData(data);
+//            chart.invalidate();       0608 0131 차트 삭제
 
         }
     }
@@ -406,77 +418,79 @@ public class scaleDetector extends Activity implements OnClickListener {
         return "";
     }
 
-/*
-    public String whichScale2(double[]... toTransform){
+    /*
+        public String whichScale2(double[]... toTransform){
 
-        f253.add(toTransform[0][253]);
-        f254.add(toTransform[0][254]);
-        f255.add(toTransform[0][255]);
+            f253.add(toTransform[0][253]);
+            f254.add(toTransform[0][254]);
+            f255.add(toTransform[0][255]);
 
-        System.out.println("292 : " + toTransform[0][292]);
-        System.out.println("293 : " + toTransform[0][293]);
-        System.out.println("294 : " + toTransform[0][294]);
-        System.out.println("295 : " + toTransform[0][295]);
+            System.out.println("292 : " + toTransform[0][292]);
+            System.out.println("293 : " + toTransform[0][293]);
+            System.out.println("294 : " + toTransform[0][294]);
+            System.out.println("295 : " + toTransform[0][295]);
 
 
-        if(toTransform[0][111]>99999){
+            if(toTransform[0][111]>99999){
+                return " ";
+            }
+            else if(toTransform[0][259]>20 ||toTransform[0][260]> 20 || toTransform[0][261]>20 || toTransform[0][262]>20 ){
+                return "C4"; //도
+            }
+            else if(toTransform[0][292]>20 || toTransform[0][293]>20 || toTransform[0][294]>20 || toTransform[0][295]>20){
+                System.out.println("SBSB");
+                return "D4"; //레
+            }
+            else if(toTransform[0][328]>50 ||toTransform[0][329]>50 || toTransform[0][330]>50 || toTransform[0][231]>20 ){
+                return "E4"; //미
+            }
+            else if(toTransform[0][348]>50 || toTransform[0][349]>50 || toTransform[0][350]>50 || toTransform[0][351]>50){
+                return "F4"; //파
+            }
+            else if(toTransform[0][390]>55 || toTransform[0][391]>60 || toTransform[0][392]>60 || toTransform[0][393]>60){
+                return "G4"; //솔
+            }
+            else if(toTransform[0][438]>30 || toTransform[0][439]>30 || toTransform[0][440]>55 ||
+                    toTransform[0][441]>30 || toTransform[0][442]>30){
+                return "A4"; //라
+            }
+            else if(toTransform[0][492]>80 ||toTransform[0][493]>80 || toTransform[0][494]>80 || toTransform[0][495]>80  ){
+                return "B4"; //솔
+            }
+            //5옥타브
+            else if(toTransform[0][523]>20 || toTransform[0][524]> 20 || toTransform[0][525]> 20  ){
+                System.out.println("FUCK");
+                return "C5";
+            }
+            else if(toTransform[0][587]>44 ||toTransform[0][588]>44 || toTransform[0][589]>44  ){
+                return "D5";
+            }
+            else if(toTransform[0][660]>15 ||toTransform[0][659]>20 || toTransform[0][662]>20 ||
+                    toTransform[0][663]>20 ||toTransform[0][658]>15 || toTransform[0][657]>28 ){
+                return "E5";
+            }
+            else if(toTransform[0][697]>60 ||toTransform[0][698]>60 ||  toTransform[0][699]>60 || toTransform[0][700]>60  ){
+                return "F5";
+            }
+            else if(toTransform[0][783]>55 ||toTransform[0][784]>55 ){
+                return "G5";
+            }
+            else if(toTransform[0][880]>60 ||toTransform[0][881]>60 || toTransform[0][882]>60 ){
+                return "A5";
+            }
+            else if(toTransform[0][987]>33 ||toTransform[0][988]>33 || toTransform[0][989]>33 ){
+                return "B5";
+            }
             return " ";
         }
-        else if(toTransform[0][259]>20 ||toTransform[0][260]> 20 || toTransform[0][261]>20 || toTransform[0][262]>20 ){
-            return "C4"; //도
-        }
-        else if(toTransform[0][292]>20 || toTransform[0][293]>20 || toTransform[0][294]>20 || toTransform[0][295]>20){
-            System.out.println("SBSB");
-            return "D4"; //레
-        }
-        else if(toTransform[0][328]>50 ||toTransform[0][329]>50 || toTransform[0][330]>50 || toTransform[0][231]>20 ){
-            return "E4"; //미
-        }
-        else if(toTransform[0][348]>50 || toTransform[0][349]>50 || toTransform[0][350]>50 || toTransform[0][351]>50){
-            return "F4"; //파
-        }
-        else if(toTransform[0][390]>55 || toTransform[0][391]>60 || toTransform[0][392]>60 || toTransform[0][393]>60){
-            return "G4"; //솔
-        }
-        else if(toTransform[0][438]>30 || toTransform[0][439]>30 || toTransform[0][440]>55 ||
-                toTransform[0][441]>30 || toTransform[0][442]>30){
-            return "A4"; //라
-        }
-        else if(toTransform[0][492]>80 ||toTransform[0][493]>80 || toTransform[0][494]>80 || toTransform[0][495]>80  ){
-            return "B4"; //솔
-        }
-        //5옥타브
-        else if(toTransform[0][523]>20 || toTransform[0][524]> 20 || toTransform[0][525]> 20  ){
-            System.out.println("FUCK");
-            return "C5";
-        }
-        else if(toTransform[0][587]>44 ||toTransform[0][588]>44 || toTransform[0][589]>44  ){
-            return "D5";
-        }
-        else if(toTransform[0][660]>15 ||toTransform[0][659]>20 || toTransform[0][662]>20 ||
-                toTransform[0][663]>20 ||toTransform[0][658]>15 || toTransform[0][657]>28 ){
-            return "E5";
-        }
-        else if(toTransform[0][697]>60 ||toTransform[0][698]>60 ||  toTransform[0][699]>60 || toTransform[0][700]>60  ){
-            return "F5";
-        }
-        else if(toTransform[0][783]>55 ||toTransform[0][784]>55 ){
-            return "G5";
-        }
-        else if(toTransform[0][880]>60 ||toTransform[0][881]>60 || toTransform[0][882]>60 ){
-            return "A5";
-        }
-        else if(toTransform[0][987]>33 ||toTransform[0][988]>33 || toTransform[0][989]>33 ){
-            return "B5";
-        }
-        return " ";
-    }
-*/
+    */
     @Override
     public void onClick(View arg0) {
         if (started) {
             try {
-                jsonObject.put("scale", "jaehyukBabo");
+//                String scale = scaleBuffer.toString();
+                jsonObject.put("scale", scaleBuffer);
+//                jsonObject.put("scale",scale);
 //                jsonObject.put("scale", scaleBuffer);
                 jsonObject.put("email",LoginActivity.ID);
                 jsonObject.put("scoreId",MainActivity.pickValue);
@@ -502,6 +516,8 @@ public class scaleDetector extends Activity implements OnClickListener {
                         con.setRequestMethod("POST");
                         con.setRequestProperty("Content-type","application/json");
 
+
+
                         con.setDoOutput(true);
                         con.setDoInput(true);
                         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
@@ -516,6 +532,7 @@ public class scaleDetector extends Activity implements OnClickListener {
                         Log.d("MSG", "===================================" );
 
                         aaa= responseCode;
+                        score = Main.getResponseBody(con.getInputStream());
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -533,6 +550,7 @@ public class scaleDetector extends Activity implements OnClickListener {
                 e.printStackTrace();
             }
 
+
             Log.d("aaa:", aaa + "===================================" );
 
             if(aaa ==400){
@@ -541,6 +559,7 @@ public class scaleDetector extends Activity implements OnClickListener {
                 Log.d("error : 500", "===================================" );
             }
             else{
+                Log.d("@@@SCORE@@@",score);
                 Intent intent1 = new Intent(scaleDetector.this, ResultActivity.class);
                 startActivity(intent1);
             }
@@ -559,3 +578,39 @@ public class scaleDetector extends Activity implements OnClickListener {
 
 }//activity
 
+
+class Main {
+    public static String getResponseBody(HttpURLConnection conn) {
+        BufferedReader br = null;
+        StringBuilder body = null;
+        String line = "";
+        try {
+            br = new BufferedReader(new InputStreamReader(
+                    conn.getInputStream()));
+            body = new StringBuilder();
+            while ((line = br.readLine()) != null)
+                body.append(line);
+            return body.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getResponseBody(InputStream is) {
+        BufferedReader br = null;
+        StringBuilder body = null;
+        String line = "";
+        try {
+            // we use xPath to get the baseUrl and accountId from the XML
+            // response body
+            br = new BufferedReader(new InputStreamReader(is));
+            body = new StringBuilder();
+            while ((line = br.readLine()) != null)
+                body.append(line);
+            return body.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e); // simple exception handling, please
+            // review it
+        }
+    }
+}

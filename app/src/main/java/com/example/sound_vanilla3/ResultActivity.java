@@ -6,29 +6,43 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class ResultActivity extends AppCompatActivity {
 
-    ImageView imageView;
-    Bitmap bitmap;
-    Button btn_GoMain;
+
+    private Button btn_goMain;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        imageView = findViewById(R.id.imageView);
-        btn_GoMain = findViewById(R.id.btn_GoMain);
+        setContentView(R.layout.activity_result);
 
-        btn_GoMain.setOnClickListener(new View.OnClickListener() {
+        textView = findViewById(R.id.score);
+
+        btn_goMain = findViewById(R.id.btn_GoMain);
+        btn_goMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ResultActivity.this, MainActivity.class);
@@ -36,40 +50,44 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        //
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    String host_url = "http://119.67.63.55:8080/api/v2/score";
+//                    HttpURLConnection con = null;
+//                    URL url = new URL(host_url);
+//                    con = (HttpURLConnection) url.openConnection();
+//                    con.setDoInput(true);
+//                    con.setDoOutput(true);
+//
+//                    con.setRequestMethod("POST");
+//                    con.setRequestProperty("Content-Type", "application/json");
+//                    con.setChunkedStreamingMode(0);
+//
+//                    OutputStream out = new BufferedOutputStream(con.getOutputStream());
+//                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out,"UTF-8"));
+//                    writer.write(score);
+//                    writer.flush();
+//
+//                }catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        thread.start();
+//
+//        try {
+//            thread.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
-        Thread uThread = new Thread() {
-            @Override
-            public void run(){
-                try{
-                    //서버에 올려둔 이미지 URL
-                    URL url = new URL("http://___이미지경로____/me.jpg");
-
-                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-
-                    conn.setDoInput(true); //Server 통신에서 입력 가능한 상태로 만듦
-                    conn.connect(); //연결된 곳에 접속할 때 (connect() 호출해야 실제 통신 가능함)
-
-
-                    InputStream is = conn.getInputStream(); //inputStream 값 가져오기
-                    bitmap = BitmapFactory.decodeStream(is); // Bitmap으로 반환
-
-                }catch (MalformedURLException e){
-                    e.printStackTrace();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
-        };
-        uThread.start(); // 작업 Thread 실행
-        try{
-            uThread.join();
-            imageView.setImageBitmap(bitmap);
-
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
+        textView.setText("점수 : " + scaleDetector.score);
 
 
     }
+
+
 }
